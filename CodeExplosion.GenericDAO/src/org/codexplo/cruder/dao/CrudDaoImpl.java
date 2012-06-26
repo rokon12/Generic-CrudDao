@@ -47,6 +47,19 @@ public abstract class CrudDaoImpl<T extends BEntity> implements ICrudDao<T> {
 	@Autowired(required = true)
 	private SessionFactory sessionFactory;
 
+	/**
+	 * default contractor, getpersistentClass() method is called when it is
+	 * instantiated to know the entity class dynamically
+	 * 
+	 */
+	public CrudDaoImpl() {
+		getPersistentClass();
+	}
+
+	/**
+	 * its a simple private method to check if the entity is instance of
+	 * IDeletable interface or not
+	 * */
 	private boolean checkEntityIsInstanceOfDeletable(Object a) {
 		if (a instanceof IDeletable) {
 			return true;
@@ -54,19 +67,16 @@ public abstract class CrudDaoImpl<T extends BEntity> implements ICrudDao<T> {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.codexplo.cruder.dao.ICrudDao#count()
 	 */
 	@Override
 	public long count() {
-		return (long) getCriteria(getpersistentClass())
+		return (long) getCriteria(getPersistentClass())
 				.setProjection(Projections.rowCount()).list().get(0);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
 	 * @see org.codexplo.cruder.dao.ICrudDao#delete(java.lang.Long)
 	 */
@@ -89,8 +99,8 @@ public abstract class CrudDaoImpl<T extends BEntity> implements ICrudDao<T> {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * 
 	 * 
 	 * @see org.codexplo.cruder.dao.ICrudDao#findAll()
 	 */
@@ -99,7 +109,7 @@ public abstract class CrudDaoImpl<T extends BEntity> implements ICrudDao<T> {
 	public List<T> findAll() {
 		log.debug("return list with all object..." + persistentClass);
 		Set<T> set = new HashSet<T>();
-		set.addAll(getCriteria(getpersistentClass()).list());
+		set.addAll(getCriteria(getPersistentClass()).list());
 		List<T> list = new ArrayList<T>();
 		Iterator<T> it = set.iterator();
 		while (it.hasNext()) {
@@ -108,15 +118,15 @@ public abstract class CrudDaoImpl<T extends BEntity> implements ICrudDao<T> {
 		return list;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * 
 	 * 
 	 * @see org.codexplo.cruder.dao.ICrudDao#findById(java.lang.Long)
 	 */
 	@Override
 	public T findById(Long id) {
 		@SuppressWarnings("unchecked")
-		List<T> list = getCriteria(getpersistentClass()).add(
+		List<T> list = getCriteria(getPersistentClass()).add(
 				Restrictions.eq("id", id)).list();
 		if (list.size() > 0) {
 			log.debug("object found by id..." + list.get(0));
@@ -127,11 +137,11 @@ public abstract class CrudDaoImpl<T extends BEntity> implements ICrudDao<T> {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * 
 	 * 
 	 * @see org.codexplo.cruder.dao.ICrudDao#findByName(java.lang.String,
-	 * java.lang.Object)
+	 *      java.lang.Object)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -140,8 +150,9 @@ public abstract class CrudDaoImpl<T extends BEntity> implements ICrudDao<T> {
 				.add(Restrictions.eq(propertyName, value)).list().get(0);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * 
+	 * 
 	 * 
 	 * @see org.codexplo.cruder.dao.ICrudDao#findDeleted()
 	 */
@@ -155,8 +166,9 @@ public abstract class CrudDaoImpl<T extends BEntity> implements ICrudDao<T> {
 	}
 
 	/**
-	 * @param persistentClass2
-	 * @return
+	 * @param persistentClass
+	 *            the entity class
+	 * @return the criteria of that entity class
 	 */
 	private Criteria getCriteria(Class<T> persistentClass) {
 		Criteria criteria = getSession().getCurrentSession().createCriteria(
@@ -168,15 +180,20 @@ public abstract class CrudDaoImpl<T extends BEntity> implements ICrudDao<T> {
 	}
 
 	/**
-	 * @return
+	 * @return current sessions
 	 */
 
 	public Session getCurrentSession() {
 		return getSession().getCurrentSession();
 	}
 
+	/**
+	 * this method is used to find the entity class dynamically using java
+	 * reflection
+	 * **/
+
 	@SuppressWarnings("unchecked")
-	private Class<T> getpersistentClass() {
+	private Class<T> getPersistentClass() {
 		if (persistentClass == null) {
 			Type type = getClass().getGenericSuperclass();
 			loop: while (true) {
@@ -203,17 +220,16 @@ public abstract class CrudDaoImpl<T extends BEntity> implements ICrudDao<T> {
 	}
 
 	/**
-	 * @return
+	 * @return sessionFactory
 	 */
 	private SessionFactory getSession() {
 		return sessionFactory;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see
-	 * org.codexplo.cruder.dao.ICrudDao#save(org.codexplo.cruder.domain.BEntity)
+	 * 
+	 * @see org.codexplo.cruder.dao.ICrudDao#save(org.codexplo.cruder.domain.BEntity)
 	 */
 	@Override
 	public T save(T t) {
@@ -221,7 +237,7 @@ public abstract class CrudDaoImpl<T extends BEntity> implements ICrudDao<T> {
 			t.setDeleted(false);
 			t.setCreationDate(new Date());
 			t.setLastUpdatedDate(new Date());
-			// log.debug("Saving... " + persistentClass.toString());
+			log.debug("Saving... " + persistentClass.toString());
 			getCurrentSession().save(t);
 			return t;
 		} else {
@@ -230,12 +246,11 @@ public abstract class CrudDaoImpl<T extends BEntity> implements ICrudDao<T> {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see
-	 * org.codexplo.cruder.dao.ICrudDao#update(org.codexplo.cruder.domain.BEntity
-	 * )
+	 * 
+	 * @see org.codexplo.cruder.dao.ICrudDao#update(org.codexplo.cruder.domain.BEntity
+	 *      )
 	 */
 	@Override
 	public T update(T t) {

@@ -11,9 +11,6 @@ package org.codexplo.cruder.domain;
  * <em>IDeletable</em> interface
  * 
  * 
- * @author: Bazlur Rahman Rokon
- * 
- * @version 1.0
  * @see BEntity
  * @see IDeletable
  */

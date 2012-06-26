@@ -10,6 +10,8 @@ package org.codexplo.cruder.domain;
  * black interface, if it is implemented by any entity, that entity is supposed
  * to delete permanently. otherwise we will change only the deleted flag of Base
  * Entity
+ * 
+ * @see DEntity
  */
 public interface IDeletable {
 
