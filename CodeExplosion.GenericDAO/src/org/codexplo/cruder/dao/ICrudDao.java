@@ -86,19 +86,19 @@ public interface ICrudDao<T extends BEntity> {
 	/**
 	 * basic save operation
 	 * 
-	 * @param T
+	 * @param entity
 	 *            the entity object
 	 * @return the entity that has saved successfully otherwise null
 	 * */
-	public T save(T t);
+	public T save(T entity);
 
 	/**
 	 * basic update operation
 	 * 
-	 * @param T
+	 * @param entity
 	 *            the entity object
 	 * @return the entity that has updated successfully otherwise null
 	 * */
 
-	public T update(T t);
+	public T update(T entity);
 }
