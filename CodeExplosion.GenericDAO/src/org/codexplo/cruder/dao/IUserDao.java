@@ -11,10 +11,6 @@ package org.codexplo.cruder.dao;
 
 import org.codexplo.cruder.domain.User;
 
-/**
- * @author Rokonoid
- * 
- */
 public interface IUserDao extends ICrudDao<User> {
 
 }

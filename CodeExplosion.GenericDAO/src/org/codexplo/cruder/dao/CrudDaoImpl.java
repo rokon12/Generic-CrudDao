@@ -166,11 +166,14 @@ public abstract class CrudDaoImpl<T extends BEntity> implements ICrudDao<T> {
 	}
 
 	/**
+	 * this is protected method, we may get criteria if we have some more method
+	 * to implement in our own entity operations
+	 * 
 	 * @param persistentClass
 	 *            the entity class
 	 * @return the criteria of that entity class
 	 */
-	private Criteria getCriteria(Class<T> persistentClass) {
+	protected Criteria getCriteria(Class<T> persistentClass) {
 		Criteria criteria = getSession().getCurrentSession().createCriteria(
 				persistentClass);
 		if (!checkEntityIsInstanceOfDeletable(persistentClass)) {
